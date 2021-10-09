@@ -92,4 +92,92 @@ global dependency : sudo npm install -g <packageName>
 package.json stores important info about project/package, created by npm init
 packagejson is helpful when sharing project with other developers
 
+in the "scripts" of package.json,
+"scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  }
+then to run app.js, type **npm start**
+or **npm run dev**, this is a constantly changing console when you change your code
+
+removing packages
+do npm uninstall bootstrap(name of file)
+
+installing package gloabally
+sudo npm install -g nodemon
+
+event loops
+**const {readFile,writeFile} = require('fs')
+const util = require('util');
+const readFilePromise = util.promisify(readFile)
+const writeFilePromise = util.promisify(writeFile)**
+so that the 2 methods returns a promise
+
+**const start = async() =>{
+    try {
+        const first = await readFilePromise('./content/first.txt', 'utf8');
+        const second = await readFilePromise('./content/second.txt', 'utf8');
+        await writeFilePromise('./content/newly-created.txt', `this is awesome: ${first} ${second}`)
+        console.log(first,second);
+    } catch (error) {
+        console.log(error);
+    }
+}**
+
+start()
+
+event listeners
+on: listen for an event
+emit: emit an event
+
+**const eventEmitter = require('events');
+const customEmitter = new eventEmitter()
+customEmitter.on('response',(name,age)=>{
+    console.log(`data received ${name} with ${age}`);
+})
+customEmitter.on('response',()=>{
+    console.log(`some other logic here `);
+})
+customEmitter.emit('response','john',34)**
+
+**const server = http.createServer()
+server.on('request', (req,res)=>{
+    res.end('Welcome)
+})
+server.listen(5000)**
+
+
+dealing with big text files
+const { writeFileSync } = require('fs')
+for (let i = 0; i < 10000; i++) {
+    writeFileSync('./content/big.txt', `hello world ${i}\n`, { flag:'a'})
+}
+
+const {createReadStream} = require('fs');
+const stream = createReadStream('./content/big.txt', {
+    highWaterMark: 90000,       //this removes the 64kb cap of each chunk and change it to 90kb
+});
+
+stream.on('data',(result)=>{
+    console.log(result);
+})
+stream.on('error', (err)=>{
+    console.log(err);
+})
+
+
+var http = require('http')
+var fs = require('fs')
+const server = http.createServer()
+
+http.createServer((req,res)=>{
+    const fileStream = fs.createReadStream('./content/big.txt', 'utf8');
+    fileStream.on('open', ()=>{
+        fileStream.pipe()       //this sends data in chunks
+    })
+    fileStream.on('error', (err)=>{
+        res.end(err)
+    })
+})
+server.listen(5000)
 
